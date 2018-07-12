@@ -7,6 +7,7 @@ import QtQuick.Controls.Material 2.2
 import Jewel.MusicController 1.0
 
 ApplicationWindow {
+    id: appWindow
     visible: true
     width: 640
     height: 480
@@ -102,6 +103,7 @@ ApplicationWindow {
                 musicController.setTempoFactor(tempoSpinbox.value);
             });
             trackerVisualizer.channelCount = musicController.getNumChannels();
+            appWindow.width = trackerVisualizer.channelCount * 40;
             close();
         }
     }
