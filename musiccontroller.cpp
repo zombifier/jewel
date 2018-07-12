@@ -96,7 +96,10 @@ double MusicController::getDurationSeconds() {
 }
 
 void MusicController::setPositionSeconds(double pos) {
-    if (mod != nullptr) mod->set_position_seconds(pos);
+    if (mod != nullptr && mod->get_position_seconds() != pos) {
+        mod->set_position_seconds(pos);
+        emit positionChanged();
+    }
 }
 
 double MusicController::getPositionSeconds() {

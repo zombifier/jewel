@@ -22,7 +22,7 @@ class MusicController : public QObject
     Q_OBJECT
 public:
     explicit MusicController(QObject *parent = nullptr);
-    Q_PROPERTY (double songPosition READ getPositionSeconds WRITE setPositionSeconds NOTIFY positionChanged)
+    Q_PROPERTY (double songPosition READ getPositionSeconds NOTIFY positionChanged)
     Q_PROPERTY (double songDuration READ getDurationSeconds NOTIFY durationChanged)
     Q_PROPERTY (bool isPlaying READ isPlaying NOTIFY isPlayingChanged)
     Q_PROPERTY (QVariant currentPatternData READ currentPatternData NOTIFY currentPatternChanged)
@@ -38,7 +38,7 @@ public:
     Q_INVOKABLE void setTempoFactor(int value);
     Q_INVOKABLE QVariantList testModel();
     double getPositionSeconds();
-    void setPositionSeconds(double pos);
+    Q_INVOKABLE void setPositionSeconds(double pos); // this is not part of the property because we don't want nasty binding loops
     double getDurationSeconds();
     bool isPlaying();
     QVariantList currentPatternData();

@@ -124,6 +124,7 @@ ApplicationWindow {
                 Layout.fillWidth: true
                 value: musicController.songPosition
                 to: musicController.songDuration
+                onMoved: musicController.setPositionSeconds(value)
             }
         }
         RowLayout {
