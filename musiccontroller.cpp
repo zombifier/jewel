@@ -5,8 +5,11 @@
 #include <QDebug>
 #include <portaudio.h>
 
+MusicController* MusicController::instance = 0;
+
 MusicController::MusicController(QObject *parent) : QObject(parent)
 {
+    instance = this;
     portaudio::AutoSystem portaudio_initializer;
     portaudio_initializer.initialize();
     portaudio::System & portaudio = portaudio::System::instance();
@@ -14,6 +17,10 @@ MusicController::MusicController(QObject *parent) : QObject(parent)
     portaudio::StreamParameters stream_parameters(portaudio::DirectionSpecificStreamParameters::null(), outputstream_parameters, samplerate, paFramesPerBufferUnspecified, paNoFlag);
     stream = new portaudio::MemFunCallbackStream<MusicController>(stream_parameters, *this, &MusicController::streamCallback);
     qDebug() << "PortAudio initialized.";
+}
+
+MusicController* MusicController::getInstance() {
+    return instance;
 }
 
 /** Opens a module for playback.

@@ -22,6 +22,7 @@ class MusicController : public QObject
     Q_OBJECT
 public:
     explicit MusicController(QObject *parent = nullptr);
+    static MusicController* getInstance();
     Q_PROPERTY (double songPosition READ getPositionSeconds NOTIFY positionChanged)
     Q_PROPERTY (double songDuration READ getDurationSeconds NOTIFY durationChanged)
     Q_PROPERTY (bool isPlaying READ isPlaying NOTIFY isPlayingChanged)
@@ -43,6 +44,10 @@ public:
     bool isPlaying();
     QVariantList currentPatternData();
     int currentRow();
+
+    // delete the assignment and copy constructor
+    MusicController(MusicController const&) = delete;
+    void operator=(MusicController const&) = delete;
 signals:
     void positionChanged();
     void durationChanged();
@@ -50,6 +55,7 @@ signals:
     void currentPatternChanged();
     void currentRowChanged();
 private:
+    static MusicController *instance;
     openmpt::module_ext *mod = nullptr;
     openmpt::ext::interactive *interactive;
     // the following two variables are used to avoid unnecessary order/pattern changed signals
