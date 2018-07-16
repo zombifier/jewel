@@ -1,0 +1,36 @@
+#ifndef ORGMPRISMEDIAPLAYER2ADAPTOR_H
+#define ORGMPRISMEDIAPLAYER2ADAPTOR_H
+
+#include <QtDBus/QDBusAbstractAdaptor>
+#include "musiccontroller.h"
+
+class OrgMPRISMediaPlayer2Adaptor : public QDBusAbstractAdaptor
+{
+    Q_OBJECT
+    Q_CLASSINFO("D-Bus Interface", "org.mpris.MediaPlayer2")
+    Q_PROPERTY(bool CanQuit READ CanQuit)
+    //Q_PROPERTY(bool Fullscreen READ Fullscreen WRITE setFullscreen)
+    //Q_PROPERTY(bool CanSetFullscreen READ CanSetFullscreen)
+    Q_PROPERTY(bool CanRaise READ CanRaise)
+    Q_PROPERTY(bool HasTrackList READ HasTrackList)
+    Q_PROPERTY(QString Identity READ Identity)
+    Q_PROPERTY(QString DesktopEntry READ DesktopEntry)
+    Q_PROPERTY(QStringList SupportedUriSchemes READ SupportedUriSchemes)
+    Q_PROPERTY(QStringList SupportedMimeTypes READ SupportedMimeTypes)
+public:
+    OrgMPRISMediaPlayer2Adaptor(MusicController *musicController);
+    bool CanQuit();
+    bool CanRaise() const;
+    bool HasTrackList() const;
+    QString Identity() const;
+    QString DesktopEntry() const;
+    QStringList SupportedUriSchemes() const;
+    QStringList SupportedMimeTypes() const;
+public slots:
+    void Raise();
+    void Quit();
+private:
+    MusicController *musicController;
+};
+
+#endif // ORGMPRISMEDIAPLAYER2ADAPTOR_H

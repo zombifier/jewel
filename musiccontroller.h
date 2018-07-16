@@ -30,6 +30,7 @@ public:
     Q_INVOKABLE bool openFile(QUrl fileName);
     Q_INVOKABLE void play();
     Q_INVOKABLE void pause();
+    Q_INVOKABLE void stop();
     Q_INVOKABLE QString songName();
     Q_INVOKABLE int getNumSubsongs();
     Q_INVOKABLE void selectSubsong(int num);
@@ -49,6 +50,8 @@ signals:
     void isPlayingChanged();
     void currentPatternChanged();
     void currentRowChanged();
+
+    void raiseWindow();
 private:
     openmpt::module_ext *mod = nullptr;
     openmpt::ext::interactive *interactive;

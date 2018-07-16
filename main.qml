@@ -84,6 +84,7 @@ ApplicationWindow {
 
     MusicController {
         id: musicController
+        onRaiseWindow: appWindow.raise()
     }
 
     FileDialog {
@@ -136,6 +137,5 @@ ApplicationWindow {
                 onToggleChannel: musicController.toggleChannel(index, isActive);
             }
         }
-
     }
 }

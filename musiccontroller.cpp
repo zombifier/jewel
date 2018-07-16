@@ -66,6 +66,14 @@ void MusicController::pause() {
     }
 }
 
+void MusicController::stop() {
+    pause();
+    mod->set_position_seconds(0);
+    emit positionChanged();
+    emit currentPatternChanged();
+    emit currentRowChanged();
+}
+
 int MusicController::streamCallback(const void *inputBuffer, void *outputBuffer, unsigned long numFrames,
                        const PaStreamCallbackTimeInfo *timeInfo, PaStreamCallbackFlags statusFlags) {
 
