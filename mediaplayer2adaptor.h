@@ -20,7 +20,7 @@ class MediaPlayer2Adaptor : public QDBusAbstractAdaptor
     Q_PROPERTY(QStringList SupportedUriSchemes READ SupportedUriSchemes)
     Q_PROPERTY(QStringList SupportedMimeTypes READ SupportedMimeTypes)
 public:
-    MediaPlayer2Adaptor(MusicController *musicController);
+    explicit MediaPlayer2Adaptor(QObject *parent = nullptr);
     bool CanQuit();
     bool CanRaise();
     bool HasTrackList();
@@ -31,8 +31,6 @@ public:
 public slots:
     void Raise();
     void Quit();
-private:
-    MusicController *musicController;
 };
 
 #endif // MEDIAPLAYER2ADAPTOR_H

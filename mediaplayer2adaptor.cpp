@@ -3,9 +3,8 @@
 #include <QMimeType>
 #include <QGuiApplication>
 
-MediaPlayer2Adaptor::MediaPlayer2Adaptor(MusicController *musicController)
+MediaPlayer2Adaptor::MediaPlayer2Adaptor(QObject *parent) : QDBusAbstractAdaptor(parent)
 {
-    this->musicController = musicController;
 }
 
 bool MediaPlayer2Adaptor::CanQuit() {
@@ -54,7 +53,7 @@ QStringList MediaPlayer2Adaptor::SupportedMimeTypes() {
 }
 
 void MediaPlayer2Adaptor::Raise() {
-    emit musicController->raiseWindow();
+    emit MusicController::getInstance()->raiseWindow();
 }
 
 void MediaPlayer2Adaptor::Quit() {

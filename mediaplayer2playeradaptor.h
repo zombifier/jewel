@@ -23,7 +23,7 @@ class MediaPlayer2PlayerAdaptor : public QDBusAbstractAdaptor
     Q_PROPERTY(bool CanSeek READ CanSeek)
     Q_PROPERTY(bool CanControl READ CanControl)
 public:
-    MediaPlayer2PlayerAdaptor(MusicController *musicController);
+    explicit MediaPlayer2PlayerAdaptor(QObject *parent = nullptr);
     QString PlaybackStatus() const;
     QString LoopStatus() const;
     void setLoopStatus(const QString& loopStatus) const;
@@ -57,9 +57,6 @@ public slots:
     void Seek(qlonglong Offset) const;
     void SetPosition(const QDBusObjectPath& TrackId, qlonglong Position) const;
     void OpenUri(QString Uri) const;
-
-private:
-    MusicController *musicController;
 };
 
 #endif // MEDIAPLAYER2PLAYERADAPTOR_H
