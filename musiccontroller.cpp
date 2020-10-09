@@ -1,4 +1,5 @@
 #include "musiccontroller.h"
+#include <algorithm>
 #include <vector>
 #include <fstream>
 #include <iostream>
@@ -16,6 +17,7 @@ MusicController::MusicController(QObject *parent) : QObject(parent)
     portaudio::DirectionSpecificStreamParameters outputstream_parameters(portaudio.defaultOutputDevice(), 2, portaudio::FLOAT32, false, portaudio.defaultOutputDevice().defaultHighOutputLatency(), 0);
     portaudio::StreamParameters stream_parameters(portaudio::DirectionSpecificStreamParameters::null(), outputstream_parameters, samplerate, paFramesPerBufferUnspecified, paNoFlag);
     stream = new portaudio::MemFunCallbackStream<MusicController>(stream_parameters, *this, &MusicController::streamCallback);
+    stream->start();
     qDebug() << "PortAudio initialized.";
 }
 
@@ -58,17 +60,18 @@ bool MusicController::openFile(QUrl fileName) {
 }
 
 void MusicController::play() {
-    qDebug() << "Starting playback.";
-    if (!stream->isActive() && !stream->isStopped()) stream->stop();
     if (stream->isStopped() && mod != nullptr) {
         stream->start();
+    }
+    if (!playing) {
+        playing = true;
         emit isPlayingChanged();
     }
 }
 
 void MusicController::pause() {
     if (!stream->isStopped()) {
-        stream->stop();
+        playing = false;
         emit isPlayingChanged();
     }
 }
@@ -76,23 +79,32 @@ void MusicController::pause() {
 int MusicController::streamCallback(const void *inputBuffer, void *outputBuffer, unsigned long numFrames,
                        const PaStreamCallbackTimeInfo *timeInfo, PaStreamCallbackFlags statusFlags) {
 
-    std::size_t count = mod->read(samplerate, numFrames, ((float**)outputBuffer)[0], ((float**)outputBuffer)[1]);
-    emit positionChanged();
-    int newRow = mod->get_current_row();
-    int newPattern = mod->get_current_pattern();
-    if (patternNum != newPattern) {
-        patternNum = newPattern;
-        emit currentPatternChanged();
-    }
-    if (rowNum != newRow) {
-        rowNum = newRow;
-        emit currentRowChanged();
-    }
-    if (count == 0) {
-        mod->set_position_seconds(0);
+    float* leftBuffer = ((float**)outputBuffer)[0];
+    float* rightBuffer = ((float**)outputBuffer)[1];
+    if (playing) {
+        std::size_t count = mod->read(samplerate, numFrames, leftBuffer, rightBuffer);
         emit positionChanged();
-        emit isPlayingChanged();
-        return 1; // playback finished
+        int newRow = mod->get_current_row();
+        int newPattern = mod->get_current_pattern();
+        if (patternNum != newPattern) {
+            patternNum = newPattern;
+            emit currentPatternChanged();
+        }
+        if (rowNum != newRow) {
+            rowNum = newRow;
+            emit currentRowChanged();
+        }
+        if (count == 0) {
+            mod->set_position_seconds(0);
+            emit positionChanged();
+            emit isPlayingChanged();
+            playing = false;
+            return 1; // playback finished
+        }
+    } else {
+        // WRITE ZEROS INTO BUFFERS
+        std::fill(leftBuffer, leftBuffer + numFrames, 0);
+        std::fill(rightBuffer, rightBuffer + numFrames, 0);
     }
     return 0;
 }
@@ -119,8 +131,7 @@ int MusicController::getNumSubsongs() { return mod->get_num_subsongs(); }
 int MusicController::getNumChannels() { return mod->get_num_channels(); }
 
 bool MusicController::isPlaying() {
-    if (stream->isActive()) return true;
-    else return false;
+    return playing;
 }
 
 int MusicController::currentRow() {
@@ -170,4 +181,8 @@ QVariantList MusicController::testModel() {
         list.append(QVariant::fromValue(q));
     }
     return list;
+}
+
+MusicController::~MusicController() {
+    this->pause();
 }

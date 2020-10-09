@@ -22,6 +22,7 @@ class MusicController : public QObject
     Q_OBJECT
 public:
     explicit MusicController(QObject *parent = nullptr);
+    ~MusicController();
     static MusicController* getInstance();
     Q_PROPERTY (double songPosition READ getPositionSeconds NOTIFY positionChanged)
     Q_PROPERTY (double songDuration READ getDurationSeconds NOTIFY durationChanged)
@@ -66,6 +67,7 @@ private:
     const std::int32_t samplerate = 48000;
     int streamCallback(const void *inputBuffer, void *outputBuffer, unsigned long numFrames,
                        const PaStreamCallbackTimeInfo *timeInfo, PaStreamCallbackFlags statusFlags);
+    bool playing = false;
 };
 
 #endif // MUSICCONTROLLER_H
