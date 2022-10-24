@@ -30,7 +30,7 @@ MusicController* MusicController::getInstance() {
  */
 bool MusicController::openFile(QUrl fileName) {
     try {
-        std::ifstream file(fileName.toLocalFile().toStdString());
+        std::ifstream file(fileName.toLocalFile().toStdString(), std::ios::binary);
         mod = new openmpt::module_ext(file);
         interactive = static_cast<openmpt::ext::interactive*>(mod->get_interface(openmpt::ext::interactive_id));
         // we fill the pattern content 3d array
@@ -53,8 +53,8 @@ bool MusicController::openFile(QUrl fileName) {
         emit currentRowChanged();
         mod->set_repeat_count(-1);
         return true;
-    } catch (openmpt::exception e) {
-        qDebug() << "Error opening file\n";
+    } catch (openmpt::exception &e) {
+        qDebug() << "Error opening file:" << e.what();
         return false;
     }
 }
